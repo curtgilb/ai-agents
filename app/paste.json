@@ -1,0 +1,16 @@
+{
+  "role": "assistant",
+  "content": null,
+  "tool_calls": [
+    {
+      "id": "call_ruBHFpE6L6zYwbI8N99jYtd0",
+      "type": "function",
+      "function": {
+        "name": "getWeather",
+        "arguments": "{\"location\":{\"lon\":-111.9361,\"lat\":41.0396}}"
+      }
+    }
+  ],
+  "refusal": null,
+  "annotations": []
+}

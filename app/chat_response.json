@@ -1,0 +1,36 @@
+{
+  "id": "chatcmpl-BACrvYGl2SeSZgCq2rL8H9sr5Si9D",
+  "object": "chat.completion",
+  "created": 1741772447,
+  "model": "gpt-4o-mini-2024-07-18",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Sure! Here's a haiku about JavaScript:\n\nDynamic and bold,  \nFunctions dance with graceful flows,  \nWeb's heartbeat in code.",
+        "refusal": null,
+        "annotations": []
+      },
+      "logprobs": null,
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 701,
+    "completion_tokens": 30,
+    "total_tokens": 731,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "audio_tokens": 0
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 0,
+      "audio_tokens": 0,
+      "accepted_prediction_tokens": 0,
+      "rejected_prediction_tokens": 0
+    }
+  },
+  "service_tier": "default",
+  "system_fingerprint": "fp_06737a9306"
+}

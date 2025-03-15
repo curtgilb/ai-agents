@@ -1,0 +1,20 @@
+{
+  "include": [
+    "src/**/*"
+  ],
+
+  "compilerOptions": {
+    "target": "esnext", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "nodenext", /* Specify what module code is generated. */
+    "moduleResolution": "nodenext", /* Specify how TypeScript looks up a file from a given module specifier. */
+    "esModuleInterop": true, /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true, 
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "typeRoots": ["./node_modules/@types"]
+  }
+}

@@ -1,0 +1,28 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
+{
+  "name": "Node.js & TypeScript",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "dockerComposeFile": ["../../docker-compose.yml"],
+  "service": "app",
+  "shutdownAction": "none",
+  "workspaceFolder": "/workspace/app",
+
+  // Features to add to the dev container. More info: https://containers.dev/features.
+  // "features": {},
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  // "forwardPorts": [],
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  "postCreateCommand": "npm install -g npm@latest && npm install",
+
+  // Configure tool-specific properties.
+  // "customizations": {},
+  "remoteUser": "root",
+  "customizations": {
+    "vscode": {
+      "extensions": ["esbenp.prettier-vscode", "yzhang.markdown-all-in-one"]
+    }
+  }
+}
