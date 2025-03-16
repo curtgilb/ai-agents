@@ -14,7 +14,7 @@ class Chunk:
     embedding: str = None
 
 
-def extract_header_info(line: str) -> Tuple[int, str]:
+def _extract_header_info(line: str) -> Tuple[int, str]:
     """Extract header level and text from a markdown header line."""
     match = re.match(r'^(#{1,6})\s+(.+)$', line)
     if not match:
@@ -24,7 +24,7 @@ def extract_header_info(line: str) -> Tuple[int, str]:
     return level, text
 
 
-def update_header_stack(stack: List[Tuple[int, str]], level: int, text: str) -> List[Tuple[int, str]]:
+def _update_header_stack(stack: List[Tuple[int, str]], level: int, text: str) -> List[Tuple[int, str]]:
     """Update the header stack based on the new header level."""
     # Make a copy to avoid modifying the original
     new_stack = stack.copy()
@@ -38,7 +38,7 @@ def update_header_stack(stack: List[Tuple[int, str]], level: int, text: str) -> 
     return new_stack
 
 
-def get_header_info(stack: List[Tuple[int, str]]) -> Tuple[str, str]:
+def _get_header_info(stack: List[Tuple[int, str]]) -> Tuple[str, str]:
     """Get current header and full header path from stack."""
     if not stack:
         return "Introduction", "Introduction"
@@ -48,9 +48,9 @@ def get_header_info(stack: List[Tuple[int, str]]) -> Tuple[str, str]:
     return current_header, header_path
 
 
-def create_chunk_from_lines(lines: List[str], header_stack: List[Tuple[int, str]], file_path: str, is_partial=False) -> Chunk:
+def _create_chunk_from_lines(lines: List[str], header_stack: List[Tuple[int, str]], file_path: str, is_partial=False) -> Chunk:
     """Create a chunk from collected lines and header information."""
-    current_header, header_path = get_header_info(header_stack)
+    current_header, header_path = _get_header_info(header_stack)
 
     return Chunk(
         header=current_header,
@@ -68,46 +68,46 @@ def chunk_file(content: str, file_path: str) -> List[Chunk]:
     header_stack = []
 
     for line in content.split('\n'):
-        level, text = extract_header_info(line)
+        level, text = _extract_header_info(line)
 
         if level > 0:  # This is a header
             # Save previous section if not empty
             if ''.join(current_lines).strip():
-                sections.append(create_chunk_from_lines(
+                sections.append(_create_chunk_from_lines(
                     current_lines, header_stack, file_path))
 
             # Update header stack
-            header_stack = update_header_stack(header_stack, level, text)
+            header_stack = _update_header_stack(header_stack, level, text)
             current_lines = []
         else:
             current_lines.append(line)
 
     # Handle last section
     if ''.join(current_lines).strip():
-        sections.append(create_chunk_from_lines(
+        sections.append(_create_chunk_from_lines(
             current_lines, header_stack, file_path))
 
     return sections
 
 
-def split_into_paragraphs(text: str) -> List[str]:
+def _split_into_paragraphs(text: str) -> List[str]:
     """Split text into paragraphs based on blank lines."""
     return re.split(r'\n\s*\n', text)
 
 
-def count_words(text: str) -> int:
+def _count_words(text: str) -> int:
     """Count words in a text string."""
     return len(text.split())
 
 
-def group_paragraphs(paragraphs: List[str], min_size: int, max_size: int) -> List[List[str]]:
+def _group_paragraphs(paragraphs: List[str], min_size: int, max_size: int) -> List[List[str]]:
     """Group paragraphs into chunks that fit size constraints."""
     groups = []
     current_group = []
     current_size = 0
 
     for para in paragraphs:
-        para_size = count_words(para)
+        para_size = _count_words(para)
 
         # If adding this paragraph exceeds max_size and we've reached min_size
         if current_size + para_size > max_size and current_size >= min_size:
@@ -125,7 +125,7 @@ def group_paragraphs(paragraphs: List[str], min_size: int, max_size: int) -> Lis
     return groups
 
 
-def paragraphs_to_chunks(paragraph_groups: List[List[str]], source_chunk: Chunk) -> List[Chunk]:
+def _paragraphs_to_chunks(paragraph_groups: List[List[str]], source_chunk: Chunk) -> List[Chunk]:
     """Convert paragraph groups to Chunk objects."""
     result = []
 
@@ -147,13 +147,13 @@ def chunk_by_size(chunks: List[Chunk], min_size: int, max_size: int) -> List[Chu
 
     for chunk in chunks:
         # If chunk is small enough, keep as is
-        if count_words(chunk.content) <= max_size:
+        if _count_words(chunk.content) <= max_size:
             result.append(chunk)
             continue
 
         # Split large chunks
-        paragraphs = split_into_paragraphs(chunk.content)
-        paragraph_groups = group_paragraphs(paragraphs, min_size, max_size)
-        result.extend(paragraphs_to_chunks(paragraph_groups, chunk))
+        paragraphs = _split_into_paragraphs(chunk.content)
+        paragraph_groups = _group_paragraphs(paragraphs, min_size, max_size)
+        result.extend(_paragraphs_to_chunks(paragraph_groups, chunk))
 
     return result
