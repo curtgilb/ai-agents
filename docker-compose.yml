@@ -10,13 +10,13 @@ services:
       - .:/workspace:cached
     command: sleep infinity
     ports:
-      - 7698:7698
+      - 8000:8000
   redis:
     image: redis:latest
     ports:
       - 6379:6379
     restart: always
-    
+
     volumes:
       - redis-data:/data
     command: redis-server --appendonly yes
