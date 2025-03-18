@@ -4,6 +4,7 @@ from database import db
 from qdrant_client.models import Distance, VectorParams, PointStruct
 from chunker import chunk_file, chunk_by_size, Chunk
 from embedder import embedder
+import tiktoken
 
 
 def _get_file_paths(directory: str) -> List[Tuple[str, str]]:
@@ -21,7 +22,7 @@ def _read_file(directory: str, file_name: str) -> str:
         return f.read()
 
 
-def _encode_chunk(chunks: List[Chunk]):
+def _encode_chunks(chunks: List[Chunk]):
     texts = []
     for chunk in chunks:
         # Include header in the text to be embedded for better context
@@ -39,12 +40,15 @@ def _encode_chunk(chunks: List[Chunk]):
 
 
 def _save_embeddings(collection_name: str, chunks: List[Chunk]):
+    enc = tiktoken.encoding_for_model("gpt-4o-mini")
     points = [PointStruct(id=idx+1, vector=chunk.embedding,
                           payload={"header": chunk.header,
                                    "content": chunk.content,
                                    "path": chunk.path,
                                    "is_partial": chunk.is_partial,
-                                   "header_path": chunk.header_path}) for idx, chunk in enumerate(chunks)]
+                                   "header_path": chunk.header_path,
+                                   "token_count": len(enc.encode(chunk.content))
+                                   }) for idx, chunk in enumerate(chunks)]
 
     _upsert_collection(collection_name)
 
@@ -59,7 +63,7 @@ def _upsert_collection(collection_name: str):
     if not db.collection_exists(collection_name):
         db.create_collection(
             collection_name=collection_name,
-            vectors_config=VectorParams(size=384, distance=Distance.DOT),
+            vectors_config=VectorParams(size=384, distance=Distance.COSINE),
         )
 
 
@@ -71,5 +75,5 @@ def ingest_documents(directory: str, collection_name: str, min_chunk_size=200, m
         header_chunks = chunk_file(content, file)
         final_chunks = chunk_by_size(
             header_chunks, min_chunk_size, max_chunk_size)
-        all_embeddings.extend(_encode_chunk(final_chunks))
+        all_embeddings.extend(_encode_chunks(final_chunks))
     _save_embeddings(collection_name, all_embeddings)

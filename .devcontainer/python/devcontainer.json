@@ -18,27 +18,8 @@
   // connected. This is typically a file mount in .devcontainer/docker-compose.yml
   "workspaceFolder": "/workspace/python",
   "postCreateCommand": "poetry install",
-  "postStartCommand": "nohup bash -c 'fastapi run main.py --port 8000 &'",
-
-  // Features to add to the dev container. More info: https://containers.dev/features.
-  // "features": {},
-
-  // Use 'forwardPorts' to make a list of ports inside the container available locally.
-  // "forwardPorts": [],
-
-  // Uncomment the next line if you want start specific services in your Docker Compose config.
-  // "runServices": [],
-
-  // Uncomment the next line if you want to keep your containers running after VS Code shuts down.
-  // "shutdownAction": "none",
-
-  // Uncomment the next line to run commands after the container is created.
-  // "postCreateCommand": "cat /etc/os-release",
-
-  // Configure tool-specific properties.
-  // "customizations": {},
-
-  // Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+  "postStartCommand": "nohup bash -c 'fastapi dev main.py --port 8000 &'",
+  // "forwardPorts": [8000],
   "remoteUser": "root",
   "customizations": {
     "vscode": {
