@@ -1,5 +1,4 @@
 import { Redis } from "ioredis";
-import { Message } from "../types.d.js";
 import { ChatCompletionMessageParam } from "openai/src/resources/index.js";
 
 const redis = new Redis({
@@ -7,13 +6,16 @@ const redis = new Redis({
   port: 6379,
 });
 
-const CHAT_THREAD_PREFIX = "chat:thread:";
+function generateKey(threadId: string) {
+  const CHAT_THREAD_PREFIX = "chat:thread:";
+  return `${CHAT_THREAD_PREFIX}${threadId}`;
+}
 
 async function addMessageToThread(
   threadId: string,
   ...messages: ChatCompletionMessageParam[]
 ): Promise<void> {
-  const key = `${CHAT_THREAD_PREFIX}${threadId}`;
+  const key = generateKey(threadId);
   try {
     const serializedMessages = messages.map((message) =>
       JSON.stringify(message)
@@ -27,7 +29,7 @@ async function addMessageToThread(
 async function getMessagesFromThread(
   threadId: string
 ): Promise<ChatCompletionMessageParam[]> {
-  const key = `${CHAT_THREAD_PREFIX}${threadId}`;
+  const key = generateKey(threadId);
   try {
     const messages = await redis.lrange(key, 0, -1);
     return messages.map((msg) => JSON.parse(msg) as ChatCompletionMessageParam);
@@ -35,6 +37,14 @@ async function getMessagesFromThread(
     console.error(`Failed to get messages from thread ${threadId}:`, error);
     return [];
   }
+}
+
+async function threadExists(threadId: string): Promise<boolean> {
+  const key = generateKey(threadId);
+
+  const exists = await redis.exists(key);
+
+  return exists === 1;
 }
 
 async function disconnect(): Promise<void> {
@@ -46,4 +56,4 @@ async function disconnect(): Promise<void> {
   }
 }
 
-export { addMessageToThread, getMessagesFromThread, disconnect };
+export { addMessageToThread, getMessagesFromThread, disconnect, threadExists };

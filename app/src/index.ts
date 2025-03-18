@@ -4,16 +4,14 @@ import { showLoading } from "./utils/Loader.js";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
 import { v4 as uuidv4 } from "uuid";
-import { sendMessage } from "./agents/WeatherAgent.js";
+import { agentOptions, getAgent } from "./AgentFactory.js";
 
 const argv = await yargs(hideBin(process.argv))
   .option("agent", {
     alias: "a",
     type: "string",
     description: "What ai agent to use",
-    choices: ["weather", "docs"],
-    demandOption: true,
-    default: "weather",
+    choices: agentOptions,
   })
   .option("id", {
     type: "string",
@@ -22,6 +20,7 @@ const argv = await yargs(hideBin(process.argv))
   .parse();
 
 const chatId = argv.id || uuidv4();
+const agent = getAgent("weather", chatId);
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -31,17 +30,13 @@ const rl = readline.createInterface({
 function waitForResponse() {
   rl.question("You: ", async (userInput) => {
     const clearLoader = showLoading();
-    console.log(userInput);
 
     // Simulate some processing time
-    const response = await sendMessage({
-      chatId,
-      message: { role: "user", content: userInput },
-    });
+    const response = await agent.ask(userInput);
 
     clearLoader();
 
-    console.log(`Assistant: ${response}`);
+    console.log(`Agent: ${response}`);
     waitForResponse();
   });
 }

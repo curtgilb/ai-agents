@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { zodFunction } from "openai/helpers/zod";
-import { WeatherResponse, GeocodeResponse } from "./Tool.d.js";
+import { WeatherResponse, GeocodeResponse } from "./WeatherToolTypes.js";
 
 const parameters = z.object({
   location: z.union([

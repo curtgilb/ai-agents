@@ -1,6 +1,6 @@
 import { components, operations } from "../api-types.js";
 
-const API_BASE_URL = "http://your-api-base-url.com";
+const API_BASE_URL = "http://python:8000";
 
 export async function fetchQuery(
   query: string
